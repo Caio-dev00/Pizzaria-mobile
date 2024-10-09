@@ -1,17 +1,19 @@
-import React, {useState} from 'react';
-import { Text, TouchableOpacity, SafeAreaView, TextInput, StyleSheet } from 'react-native';
+import React, {useContext, useState} from 'react';
+import { Text, TouchableOpacity, SafeAreaView, TextInput, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { StackParamsList } from '../../routes/app.routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import { api } from '../../services/api';
+import { AuthContext } from '../../contexts/AuthContext';
 
 
 export default function Dashboard() {
 
   const [ table, setTable ] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<StackParamsList>>();
+  const { signOut } = useContext(AuthContext)
 
 
   async function handleOpenTable(){
@@ -35,8 +37,12 @@ export default function Dashboard() {
 
   return (
     <SafeAreaView  style={styles.container}>
-        <Text  style={styles.title}> Novo pedido </Text>
 
+        <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
+          <Text style={styles.signOutText}>Sair</Text>
+        </TouchableOpacity>
+
+        <Text  style={styles.title}> Novo pedido </Text>
         <TextInput
           style={styles.input}
           placeholder='Numero da mesa'
@@ -95,6 +101,21 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontWeight: 'bold',
     fontSize: 18
+  },
+
+  signOutButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    padding: 10,
+    backgroundColor: '#ff5555',
+    borderRadius: 5,
+  },
+
+  signOutText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+    fontSize: 16,
   }
 
 })

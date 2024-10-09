@@ -1,9 +1,7 @@
 import React, { useState, createContext, ReactNode, useEffect} from 'react';
+import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../services/api';
-
-
-
 
 type AuthContextData= {
     user: UserProps;
@@ -31,9 +29,6 @@ type SignInProps = {
 }
 
 
-
-
-
 export const AuthContext = createContext({} as AuthContextData);
 
 
@@ -54,7 +49,7 @@ export default function AuthProvider({children}: AuthProviderProps){
         
         async function getUser(){
 
-            const userInfo = await AsyncStorage.getItem('@caponepizzaria');
+            const userInfo = await AsyncStorage.getItem('@pizzaria');
             let hasUser: UserProps = JSON.parse(userInfo || '{}');
 
             if(Object.keys(hasUser).length > 0){
@@ -92,7 +87,7 @@ export default function AuthProvider({children}: AuthProviderProps){
                 ...response.data
             }
 
-            await AsyncStorage.setItem('@caponepizzaria', JSON.stringify(data))
+            await AsyncStorage.setItem('@pizzaria', JSON.stringify(data))
 
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`
 
@@ -105,8 +100,23 @@ export default function AuthProvider({children}: AuthProviderProps){
 
             setLoadingAuth(false);
 
-        }catch(err){
+        }catch(err: any){
             console.log("Erro ao acessar!", err);
+
+            if (err.response) {
+                console.log("Status do erro:", err.response.status); // Log do status do erro
+                console.log("Dados do erro:", err.response.data); // Log dos dados do erro
+    
+                // Exibir uma mensagem específica dependendo do status HTTP
+                if (err.response.status === 400) {
+                    Alert.alert('Erro', 'Email ou senha incorretos!');
+                } else {
+                    Alert.alert('Erro', 'Ocorreu um erro ao fazer login. Tente novamente.');
+                }
+            } else {
+                // Erro genérico (pode ser de conexão ou outro)
+                Alert.alert('Erro', 'Ocorreu um erro de comunicação. Verifique sua conexão.');
+            }
             setLoadingAuth(false);
         }
     }

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: 'http://192.168.1.102:3333'
+    baseURL: 'https://backend-restaurant1-82244d17aaa6.herokuapp.com'
 })
 
 export { api };
